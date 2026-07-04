@@ -1,27 +1,28 @@
 import { createRouter } from "next-connect";
 import users from "models/users";
+import { setCORS } from "models/controller"; 
 
 export default createRouter()
-  .use(setCORS)
+  .use(setCORS) 
   .get(GET)
+  .post(POST)
   .handler({
-    onError: (_, __, res) => {
-      res.status(401).json({ error: "Credenciais Incorretas." });
+    onError: (error, __, res) => {
+      console.error("Erro interno:", error); 
+      res.status(500).json({ error: "Erro ao processar requisição" });
     },
   });
 
+
 async function GET(req, res) {
-  const query = req.query;
-
-  const user = await users.getByEmail(query.email);
-
-  if (user?.senha !== query.senha) throw new Error("Credenciais incorretas");
-
-  res.status(200).json(user);
+  const allUsers = await users.getAll(); 
+  
+  res.status(200).json(allUsers || []);
 }
 
-async function setCORS(req, res, next) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+async function POST(req, res) {
+  const { email, nome, senha } = req.body;
 
-  return next();
+  const newUser = await users.create(email, nome, senha);
+  res.status(201).json({ message: "Criado com sucesso", user: newUser })
 }

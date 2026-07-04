@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setUserName();
   setupLoginForm();
   setupFiltroCursos();
-  setupAbaAulas();
   setupBuscaAulas();
 });
 
@@ -96,28 +95,4 @@ function setupBuscaAulas() {
   });
 }
 
-function setupAbaAulas() {
-  const tabButtons = document.querySelectorAll(".tab-button");
-  const aulaLists = document.querySelectorAll(".aula-list");
-  if (!tabButtons.length || !aulaLists.length) return;
 
-  tabButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      tabButtons.forEach((btn) => btn.classList.remove("active"));
-      button.classList.add("active");
-
-      const target = button.dataset.tab;
-      aulaLists.forEach((list) => list.classList.remove("active"));
-
-      const targetElement = document.getElementById(`${target}Aulas`);
-      if (targetElement) {
-        targetElement.classList.add("active");
-      } else if (
-        target === "favoritos" &&
-        window.location.pathname.endsWith("aulas.html")
-      ) {
-        window.location.href = "favoritos.html";
-      }
-    });
-  });
-}

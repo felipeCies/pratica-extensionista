@@ -1,49 +1,56 @@
-import database from "models/database";
-
-async function getById(id) {
-  const ideas = await runSelectQuery(id);
-
-  return ideas;
-
-  async function runSelectQuery(id) {
-    const response = await database.query({
-      query: `
-        SELECT
-          *
-        FROM
-          ideia
-        WHERE
-          ideia.id = $1
-      ;`,
-      values: [id],
-    });
-
-    return response.rows[0];
-  }
-}
+import database from "models/database"; 
+// Ou "models/database.js" se for o padrão que estão a usar
 
 async function getAll() {
-  const ideas = await runSelectQuery();
+  const response = await database.query({
+    query: `SELECT * FROM ideia;`,
+  });
+  return response.rows;
+}
 
-  return ideas;
+async function getById(id) {
+  const response = await database.query({
+    query: `SELECT * FROM ideia WHERE id = $1;`,
+    values: [id],
+  });
+  return response.rows[0];
+}
 
-  async function runSelectQuery() {
-    const response = await database.query({
-      query: `
-        SELECT
-          *
-        FROM
-          ideia
-      ;`,
-    });
+async function create(titulo, conteudo) {
+  await database.query({
+    query: `INSERT INTO ideia (titulo, conteudo) VALUES ($1, $2);`,
+    values: [titulo, conteudo],
+  });
+  
+  return { titulo, conteudo };
+}
 
-    return response.rows;
-  }
+async function update(id, titulo, conteudo) {
+  await database.query({
+    query: `UPDATE ideia SET titulo = $1, conteudo = $2 WHERE id = $3;`,
+    values: [titulo, conteudo, id],
+  });
+  
+  return await getById(id);
+}
+
+async function remove(id) {
+  const idea = await getById(id);
+  
+  await database.query({
+    query: `DELETE FROM ideia WHERE id = $1;`,
+    values: [id],
+  });
+  
+  return idea;
 }
 
 const ideas = {
-  getById,
   getAll,
+  getById,
+  create,
+  update,
+  remove,
 };
 
 export default ideas;

@@ -1,15 +1,34 @@
 import { createRouter } from "next-connect";
-import { setCORS } from "models/controller";
 import lessons from "models/lessons";
+import { setCORS } from "models/controller";
 
-export default createRouter().use(setCORS).get(GET).handler();
+export default createRouter()
+  .use(setCORS)
+  .get(GET)
+  .post(POST) 
+  .handler({
+    onError: (error, __, res) => {
+      console.error("Erro interno:", error);
+      res.status(500).json({ error: "Erro ao processar requisição" });
+    },
+  });
 
 async function GET(req, res) {
-  const { course_id, lesson_id } = req.query;
+  const { course_id } = req.query;
 
-  const lesson = lesson_id
-    ? await lessons.getById(lesson_id)
-    : await lessons.getAll(course_id);
+  if (course_id) {
+    const courseLessons = await lessons.getByCourseId(course_id);
+    return res.status(200).json(courseLessons || []);
+  }
 
-  res.status(200).json(lesson);
+  const allLessons = await lessons.getAll();
+  return res.status(200).json(allLessons || []);
+}
+
+async function POST(req, res) {
+  const { curso_id, titulo, video_url, texto_explicativo } = req.body;
+
+  const newLesson = await lessons.create(curso_id, titulo, video_url, texto_explicativo);
+  
+  res.status(201).json({ message: "Aula criada com sucesso", lesson: newLesson });
 }

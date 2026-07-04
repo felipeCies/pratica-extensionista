@@ -1,138 +1,140 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aula</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="icon" type="image/png" href="img/icone.png" />
-  </head>
-  <body id="topo">
-    <header class="header-aula-detail">
-      <div class="header-aula-detail-top">
-        <a href="javascript:history.back()" class="back-button">
-          <img src="img/voltar_icone.png" alt="Voltar" />
-        </a>
-        <h1 id="aulaDetailTitulo">Aula</h1>
-      </div>
-    </header>
 
-    <main class="main-content-aula-detail">
-      <iframe
-        id="aula-video"
-        width="560"
-        height="315"
-        title="YouTube video player"
-        frameborder="0"
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aula</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="img/icone.png" />
+</head>
+
+<body id="topo">
+  <header class="header-aula-detail">
+    <div class="header-aula-detail-top">
+      <a href="javascript:history.back()" class="back-button">
+        <img src="img/voltar_icone.png" alt="Voltar">
+      </a>
+
+      <h1 id="aulaTitulo">Aula</h1>
+
+      <div style="width: 40px;"></div>
+    </div>
+  </header>
+
+  <main class="main-content-aula-detail">
+    
+    <div class="video-player-placeholder">
+      <iframe id="aula-video" title="YouTube video player" frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allowfullscreen
-      ></iframe>
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
 
-      <h2 class="aula-detail-title">Título da Aula</h2>
+    <h2 class="aula-detail-title">Título da Aula</h2>
 
-      <div class="aula-detail-description">
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla ac
-          gravida ante, a venenatis eros. Phasellus ut ultrices augue. Cras
-          placerat sagittis dolor non volutpat. Nullam turpis eros, lacinia at
-          auctor a, finibus vel nunc.
-        </p>
-        <p>
-          Nunc lectus magna, ultrices in mollis vel, commodo eget sem.
-          Pellentesque habitant morbi tristique senectus et netus et malesuada
-          fames ac turpis egestas. Donec eget odio at ligula tincidunt finibus.
-          Fusce ut dictum velit.
-        </p>
-      </div>
+    <div class="aula-detail-description">
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nulla ac
+        gravida ante, a venenatis eros. Phasellus ut ultrices augue. Cras
+        placerat sagittis dolor non volutpat. Nullam turpis eros, lacinia at
+        auctor a, finibus vel nunc.
+      </p>
+      <p>
+        Nunc lectus magna, ultrices in mollis vel, commodo eget sem.
+        Pellentesque habitant morbi tristique senectus et netus et malesuada
+        fames ac turpis egestas. Donec eget odio at ligula tincidunt finibus.
+        Fusce ut dictum velit.
+      </p>
+    </div>
 
-      <div class="aula-navigation">
-        <button class="nav-button nav-prev" onclick="navigateToPrevId()">
-          Anterior
-        </button>
-        <button class="nav-button nav-next" onclick="navigateToNextId()">
-          Próximo
-        </button>
-      </div>
-    </main>
+    <div class="aula-navigation">
+      <button class="nav-button nav-prev" onclick="navigateToPrevId()">
+        Anterior
+      </button>
+      <button class="nav-button nav-next" onclick="navigateToNextId()">
+        Próximo
+      </button>
+    </div>
+  </main>
 
-    <footer class="custom-footer">
-      <hr class="footer-divider" />
-      <div class="footer-container">
-        <p class="footer-text">
-          &copy; Desenvolvido pelos alunos Felipe, Gabriel, Mauricio e Guilherme
-          &middot;
-        </p>
-      </div>
-    </footer>
+  <footer class="custom-footer">
+    <hr class="footer-divider" />
+    <div class="footer-container">
+      <p class="footer-text">
+        &copy; Desenvolvido pelos alunos Felipe, Gabriel, Mauricio e Guilherme
+        &middot;
+      </p>
+    </div>
+  </footer>
 
-    <script src="script.js"></script>
-    <script>
-      function navigateToPrevId() {
-        const currentUrl = new URL(window.location.href);
+  <script src="script.js"></script>
+  <script>
+    function navigateToPrevId() {
+      const currentUrl = new URL(window.location.href);
 
-        let id = parseInt(currentUrl.searchParams.get("id"));
+      let id = parseInt(currentUrl.searchParams.get("id"));
 
-        if (isNaN(id) || id <= 1) {
-          id = 2;
-        }
-
-        id -= 1;
-
-        currentUrl.searchParams.set("id", id);
-
-        window.location.href = currentUrl.toString();
+      if (isNaN(id) || id <= 1) {
+        id = 2;
       }
 
-      function navigateToNextId() {
-        const currentUrl = new URL(window.location.href);
+      id -= 1;
 
-        let id = parseInt(currentUrl.searchParams.get("id"));
+      currentUrl.searchParams.set("id", id);
 
-        if (isNaN(id) || id >= 15) {
-          id = 0;
-        }
+      window.location.href = currentUrl.toString();
+    }
 
-        id += 1;
+    function navigateToNextId() {
+      const currentUrl = new URL(window.location.href);
 
-        currentUrl.searchParams.set("id", id);
+      let id = parseInt(currentUrl.searchParams.get("id"));
 
-        window.location.href = currentUrl.toString();
+      if (isNaN(id) || id >= 15) {
+        id = 0;
       }
 
-      const url = new URL(window.location.href);
-      const lessonId = url.searchParams.get("id");
+      id += 1;
 
-      async function fetchLesson() {
-        const response = await fetch(
-          `https://laboratorio-maker-ruddy.vercel.app/api/lessons?lesson_id=${lessonId}`
-        );
+      currentUrl.searchParams.set("id", id);
 
-        const lessonData = await response.json();
+      window.location.href = currentUrl.toString();
+    }
 
-        lessonData.texto_explicativo = lessonData.texto_explicativo.replaceAll(
-          "\n",
-          "<br />"
-        );
+    const url = new URL(window.location.href);
+    const lessonId = url.searchParams.get("id");
 
-        const ideiaTitle = document
-          .getElementsByClassName("aula-detail-title")
-          .item(0);
+    async function fetchLesson() {
+      const response = await fetch(
+        `https://laboratorio-maker-ruddy.vercel.app/api/lessons?lesson_id=${lessonId}`
+      );
 
-        const ideiaDetails = document
-          .getElementsByClassName("aula-detail-description")
-          .item(0);
+      const lessonData = await response.json();
 
-        const aulaVideo = document.getElementById("aula-video");
+      lessonData.texto_explicativo = lessonData.texto_explicativo.replaceAll(
+        "\n",
+        "<br />"
+      );
 
-        ideiaTitle.innerHTML = lessonData.titulo;
-        ideiaDetails.innerHTML = lessonData.texto_explicativo;
-        aulaVideo.src = lessonData.video_url;
+      const ideiaTitle = document
+        .getElementsByClassName("aula-detail-title")
+        .item(0);
 
-        console.log(lessonData.video_url);
-      }
+      const ideiaDetails = document
+        .getElementsByClassName("aula-detail-description")
+        .item(0);
 
-      fetchLesson();
-    </script>
-  </body>
+      const aulaVideo = document.getElementById("aula-video");
+
+      ideiaTitle.innerHTML = lessonData.titulo;
+      ideiaDetails.innerHTML = lessonData.texto_explicativo;
+      aulaVideo.src = lessonData.video_url;
+
+      console.log(lessonData.video_url);
+    }
+
+    fetchLesson();
+  </script>
+</body>
+
 </html>
