@@ -26,12 +26,10 @@
 
   <script src="script.js"></script>
   <script>
-    // Script básico para capturar o envio do form e redirecionar para o menu
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       e.preventDefault(); 
       
-      // Aqui vocês podem adicionar a lógica de validar e salvar o usuário no banco de dados!
-      // Por enquanto, apenas cria um usuário falso para a tela de perfil funcionar:
+ 
       const usuarioSimulado = {
         nome: "João da Silva",
         email: document.getElementById('email').value
