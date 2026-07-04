@@ -6,7 +6,7 @@ export default createRouter()
   .use(setCORS)
   .get(GET)
   .put(PUT)
-  .delete(DELETE) // Removido o .create() que estava sobrando
+  .delete(DELETE) 
   .handler({
     onError: (error, __, res) => {
       console.error("Erro interno no [id].js:", error);
@@ -14,9 +14,6 @@ export default createRouter()
     },
   });
 
-/* =========================================
-   ROTA GET: OBTER IDEIA POR ID
-   ========================================= */
 async function GET(req, res) {
   const { id } = req.query;
 
@@ -29,21 +26,15 @@ async function GET(req, res) {
   res.status(200).json(idea);
 }
 
-/* =========================================
-   ROTA PUT: ATUALIZAR IDEIA
-   ========================================= */
+
 async function PUT(req, res) {
   const { id } = req.query;
-  // Ajustado para receber apenas os campos que a tabela de ideias realmente tem
   const { titulo, conteudo } = req.body; 
 
   const updatedIdea = await ideas.update(id, titulo, conteudo);
   res.status(200).json(updatedIdea);
 }
 
-/* =========================================
-   ROTA DELETE: DELETAR IDEIA
-   ========================================= */
 async function DELETE(req, res) {
   const { id } = req.query;
 
