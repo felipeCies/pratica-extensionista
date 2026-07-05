@@ -6,79 +6,115 @@
   <title>Favoritos</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="img/icone.png" />
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#007bff">
 </head>
 <body id ="topo">
   <header class="header-aulas">
     <div class="header-aulas-top">
-      <a href="javascript:history.back()" class="back-button">
+      <a href="menu.html" class="back-button">
         <img src="img/voltar_icone.png" alt="Voltar">
       </a>
-      <h1 id="aulaTitulo">Aulas</h1>
+      <h1 id="aulaTitulo">Favoritos</h1>
           
       <a class="search-button" id="abrirBusca">
         <img src="img/search_icon.png" alt="Buscar">
       </a>
     </div>
 
-    
     <div id="buscaWrapper" style="display: none;">
       <input type="text" id="buscaAula" placeholder="Buscar aula..." class="input-busca" />
     </div>
     
-    </div>
     <div class="tabs">
-      <a href="aulas.html" class="tab-button" data-tab="todos">Todos</a>
-      <a href="favoritos.html" class="tab-button" data-tab="favoritos">Favoritos</a>
+      <a id="tabTodos" href="#" class="tab-button">Todos</a>
+      <a id="tabFavoritos" href="#" class="tab-button active" style="pointer-events: none;">Favoritos</a>
     </div>
   </header>
 
-  <main class="sem-favoritos">
-    <h3>No momento você não tem aulas favoritadas!</h3>
+  <main id="mainFavoritos" class="sem-favoritos">
+    <h3>Carregando...</h3>
   </main>
 
-    <footer class="custom-footer">
-  <hr class="footer-divider" />
-  <div class="footer-container">
-    <p class="footer-text">
-      &copy; Desenvolvido pelos alunos Felipe, Gabriel, Mauricio e Guilherme &middot;
-    </p>
-    <p><a href="#topo" class="footer-link">Voltar ao topo</a></p>
-  </div>
-</footer>
-
-  <script src="script.js"></script>
-
   <footer class="custom-footer">
+    <hr class="footer-divider" />
+    <div class="footer-container">
+      <p class="footer-text">
+        &copy; Desenvolvido pelos alunos Felipe, Gabriel, Mauricio e Guilherme &middot;
+      </p>
+      <p><a href="#topo" class="footer-link">Voltar ao topo</a></p>
+    </div>
   </footer>
 
-<script src="script.js"></script>
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const url = new URL(window.location.href);
+      const courseId = url.searchParams.get("cursoId");
 
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    const cursoId = urlParams.get('cursoId');
-    
-   
-    const btnTodos = document.querySelector('a[data-tab="todos"]');
-
-    if (btnTodos) {
-      if (cursoId) {
-       
-        btnTodos.href = `aulas.html?cursoId=${cursoId}`;
-      } else {
-       
-        btnTodos.href = "menu.html";
+      // Adiciona o ID do curso no botão de voltar para "Todos"
+      if (courseId) {
+        document.getElementById("tabTodos").href = `aulas.html?cursoId=${courseId}`;
       }
-    }
-  });
+
+      const mainContent = document.getElementById("mainFavoritos");
+      
+      let todosFavoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+      
+      // Filtra APENAS os favoritos do curso atual
+      let favoritosDoCurso = todosFavoritos.filter(fav => fav.courseId === String(courseId));
+
+      if (favoritosDoCurso.length > 0) {
+        mainContent.innerHTML = "";
+        mainContent.className = "main-content-aulas"; 
+
+        const lessonsListContainer = document.createElement("div");
+        lessonsListContainer.className = "aula-list active";
+
+        favoritosDoCurso.forEach(lesson => {
+          const lessonContainer = document.createElement("a");
+          lessonContainer.href = `aula.html?id=${lesson.id}`;
+          lessonContainer.className = "aula-item";
+
+          const thumb = document.createElement("div");
+          thumb.className = "aula-thumb";
+
+          const infoContainer = document.createElement("div");
+          infoContainer.className = "aula-info";
+
+          const lessonTitle = document.createElement("h3");
+          lessonTitle.className = "aula-title";
+          lessonTitle.innerHTML = `Aula ${lesson.numeroAula}`;
+
+          const lessonDescription = document.createElement("p");
+          lessonDescription.className = "aula-description";
+          lessonDescription.innerHTML = lesson.titulo;
+
+          const removeBtn = document.createElement("button");
+          removeBtn.innerHTML = "❌ Remover";
+          removeBtn.style.cssText = "margin-top: 10px; cursor: pointer; padding: 5px; background: #ff4c4c; color: white; border: none; border-radius: 5px; font-weight: bold;";
+          
+          removeBtn.onclick = (e) => {
+            e.preventDefault(); 
+            todosFavoritos = todosFavoritos.filter(f => f.id !== lesson.id);
+            localStorage.setItem("favoritos", JSON.stringify(todosFavoritos));
+            window.location.reload(); 
+          };
+
+          infoContainer.appendChild(lessonTitle);
+          infoContainer.appendChild(lessonDescription);
+          infoContainer.appendChild(removeBtn); 
+
+          lessonContainer.appendChild(thumb);
+          lessonContainer.appendChild(infoContainer);
+
+          lessonsListContainer.appendChild(lessonContainer);
+        });
+
+        mainContent.appendChild(lessonsListContainer);
+      } else {
+        mainContent.innerHTML = "<h3>No momento você não tem aulas favoritadas neste curso!</h3>";
+        mainContent.className = "sem-favoritos";
+      }
+    });
   </script>
-        <div id="loader" class="loading-overlay">
-          <div class="spinner"></div>
-        </div>
-      </body>
-    </html>
-  </body>
+</body>
 </html>

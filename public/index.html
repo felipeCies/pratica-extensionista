@@ -1,32 +1,44 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Tela Inicial - Protótipo</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="icon" type="image/png" href="img/icone.png" />
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#007bff">
-  </head>
-  <body class="body-with-image">
-    <div class="container-index">
-      <p class="descricao">
-        Bem-vindo ao laboratório maker! Navegue e explore os cursos e ideias
-        disponíveis.
-      </p>
-      <button onclick="location.href='login.html'">Entrar</button>
-      <footer class="custom-footer">
-        <hr class="footer-divider" />
-        <div class="footer-container">
-          <p class="footer-text">
-            &copy; Desenvolvido pelos alunos Felipe, Gabriel, Mauricio e
-            Guilherme &middot;
-          </p>
-        </div>
-      </footer>
-    </div>
-    <div id="loader" class="loading-overlay">
-      <div class="spinner"></div>
-    </div>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Laboratório Maker</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="img/icone.png" />
+</head>
+<body class="body-with-image">
+
+  <div class="container-index">
+    <h2>Bem-vindo!</h2>
+    <p class="descricao">Acesse sua conta para continuar e explorar o Laboratório Maker.</p>
+
+    <form class="form-login" id="loginForm">
+      <input type="email" id="email" placeholder="Seu e-mail" required />
+      <input type="password" id="senha" placeholder="Sua senha" required />
+      <button type="submit">Entrar</button>
+    </form>
+  </div>
+
+  <div class="footer-login">
+    &copy; Desenvolvido pelos alunos Felipe, Gabriel, Mauricio e Guilherme
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault(); 
+      
+ 
+      const usuarioSimulado = {
+        nome: "João da Silva",
+        email: document.getElementById('email').value
+      };
+      localStorage.setItem("user", JSON.stringify(usuarioSimulado));
+      
+      // Manda o usuário para o menu
+      window.location.href = "menu.html";
+    });
+  </script>
+</body>
 </html>

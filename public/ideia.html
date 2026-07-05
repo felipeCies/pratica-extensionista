@@ -10,8 +10,6 @@
     <title>Ideia</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/png" href="img/icone.png" />
-    <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#007bff" />
   </head>
   <body id="topo">
     <header class="header-aula-detail">
@@ -68,7 +66,9 @@
       const ideaId = url.searchParams.get("ideiaId");
 
       async function fetchIdea() {
-        const response = await fetch(`/api/ideas?id=${ideaId}`);
+        const response = await fetch(
+          `https://laboratorio-maker-ruddy.vercel.app/api/ideas?id=${ideaId}`
+        );
 
         console.log(response.status);
 
@@ -89,8 +89,5 @@
       }
       fetchIdea();
     </script>
-    <div id="loader" class="loading-overlay">
-      <div class="spinner"></div>
-    </div>
   </body>
 </html>

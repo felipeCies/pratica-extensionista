@@ -2,34 +2,32 @@ import { createRouter } from "next-connect";
 import { setCORS } from "models/controller";
 import courses from "models/courses";
 
-export default createRouter()
-  .use(setCORS)
-  .get(GET)
-  .post(POST)
-  .handler({
-    onError: (err, _, res) => {
-      console.error("Error processing request:", err);
-      res
-        .status(400)
-        .json({ error: err.message || "Erro ao processar requisição" });
-    },
-  });
+export default createRouter().use(setCORS).get(GET).post(POST).put(PUT).delete(DELETE).handler();
 
 async function GET(_, res) {
-  console.log("Fetching all courses");
   const coursesList = await courses.getAll();
 
-  console.log("Fetched courses:", coursesList);
   res.status(200).json(coursesList);
 }
-
 async function POST(req, res) {
   const { nome, descricao } = req.body;
 
-  if (!nome) {
-    return res.status(400).json({ error: "Nome do curso é obrigatório" });
-  }
+  const newCourse = await courses.create(nome, descricao);
+  
+  res.status(201).json({ message: "Curso criado com sucesso", course: newCourse });
+}
+async function PUT(req, res) {
+  const { id } = req.query; 
+  const { nome, descricao } = req.body; 
 
-  const course = await courses.create(nome, descricao || null);
-  res.status(201).json(course);
+  const updatedCourse = await courses.update(id, nome, descricao);
+  
+  res.status(200).json(updatedCourse);
+}
+async function DELETE(req, res) {
+  const { id } = req.query; 
+
+  const deletedCourse = await courses.remove(id);
+  
+  res.status(200).json({ message: "Curso deletado com sucesso", course: deletedCourse });
 }

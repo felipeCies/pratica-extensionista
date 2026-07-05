@@ -1,6 +1,6 @@
 # Laboratório Maker
 
-Caso queira acessar o projeto, [clique aqui](http://lab-maker.duckdns.org/index.html) para acessar o projeto público.
+Caso queira acessar o projeto, [clique aqui](https://laboratorio-maker-ruddy.vercel.app/) para acessar o projeto público.
 
 ## Participantes
 
@@ -10,14 +10,6 @@ Este projeto foi desenvolvido pelos alunos:
     Guilherme Henrique Cauvilla
     Felipe Luiz Cieslick
     Gabriel Mazochi
-
-## Infraestrutura
-
-Para saber como o projeto roda em produção, [clique aqui](INFRASTRUCTURE.md)
-
-## Endpoints
-
-Para saber quais são os endpoints da aplicação, e como utilizá-las, [clique aqui](/docs/endpoints/README.md)
 
 ## Como Rodar o Projeto
 
@@ -55,8 +47,27 @@ Dentro da pasta `docs/`, terá as documentações do projeto e apresentação:
       ├── apresentacao.pptx
       ├── parte-1
       │     └── (diagramas da entrega parcial)
-      ├── parte-2
-      │     └── (diagramas da entrega final)
-      └── endpoints
-            ├── README.md
-            └── (arquivos Markdown com a documentação dos enpoints)
+      └── parte-2
+            └── (diagramas da entrega final)
+
+## Documentação da API pelo Swagger
+
+Para visualizar e testar a documentação localmente certifique-se de que o banco de dados está ativo e inicie o servidor de desenvolvimento no terminal:
+
+Acesse a rota no navegador:
+
+    -http://localhost:3000/docs
+
+Clique na rota que deseja testar.
+
+Clique no botão branco Try it out no canto superior direito.
+
+Se a rota exigir algum parâmetro (como um id na URL ou dados no corpo da requisição POST/PUT), preencha os campos que irão aparecer.
+
+Clique no botão Execute.
+
+Irão aparecer os dados retornados pelo banco de dados, e os seguintes status:
+200 Sucesso
+201 Criado 
+404 Não encontrado 
+ 

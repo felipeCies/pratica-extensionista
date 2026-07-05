@@ -2,15 +2,15 @@ document.addEventListener("DOMContentLoaded", () => {
   setUserName();
   setupLoginForm();
   setupFiltroCursos();
-  setupAbaAulas();
   setupBuscaAulas();
 });
 
 function setUserName() {
   const nameTitle = document.getElementsByClassName("profile-name").item(0);
+
   const user = JSON.parse(localStorage.getItem("user"));
 
-  if (nameTitle && user) nameTitle.textContent = user.nome;
+  if (nameTitle) nameTitle.textContent = user.nome;
 }
 
 function setupLoginForm() {
@@ -20,47 +20,32 @@ function setupLoginForm() {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const emailInput = document.getElementById("email");
-    const senhaInput = document.getElementById("senha");
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("senha").value.trim();
     const msgErro = document.getElementById("msgErro");
-
-    const email = emailInput.value.trim();
-    const senha = senhaInput.value.trim();
 
     if (!email || !senha) {
       msgErro.textContent = "Por favor, preencha todos os campos.";
       return;
     }
 
-    showLoading();
+    const response = await fetch(
+      `https://laboratorio-maker-ruddy.vercel.app/api/users?email=${email}&senha=${senha}`
+    );
 
-    try {
-      const response = await fetch(`/api/users?email=${email}&senha=${senha}`);
+    if (response.status !== 200) {
+      const body = await response.json();
 
-      hideLoading();
+      msgErro.textContent = body.error;
 
-      if (response.status !== 200) {
-        const body = await response.json();
-        msgErro.textContent = body.error;
-
-        emailInput.classList.add("input-erro");
-        senhaInput.classList.add("input-erro");
-
-        setTimeout(() => {
-          emailInput.classList.remove("input-erro");
-          senhaInput.classList.remove("input-erro");
-        }, 2000);
-
-        return;
-      }
-
-      const user = await response.json();
-      localStorage.setItem("user", JSON.stringify(user));
-      window.location.href = "menu.html";
-    } catch (error) {
-      hideLoading();
-      msgErro.textContent = "Erro de conexão. Tente novamente.";
+      return;
     }
+
+    const user = await response.json();
+
+    localStorage.setItem("user", JSON.stringify(user));
+
+    window.location.href = "menu.html";
   });
 }
 
@@ -110,42 +95,4 @@ function setupBuscaAulas() {
   });
 }
 
-function setupAbaAulas() {
-  const tabButtons = document.querySelectorAll(".tab-button");
-  const aulaLists = document.querySelectorAll(".aula-list");
-  if (!tabButtons.length || !aulaLists.length) return;
 
-  tabButtons.forEach((button) => {
-    button.addEventListener("click", (e) => {
-      const target = button.dataset.tab;
-
-      if (
-        target === "favoritos" &&
-        window.location.pathname.endsWith("aulas.html")
-      ) {
-        e.preventDefault();
-        window.location.href = "favoritos.html" + window.location.search;
-        return;
-      }
-
-      tabButtons.forEach((btn) => btn.classList.remove("active"));
-      button.classList.add("active");
-
-      aulaLists.forEach((list) => list.classList.remove("active"));
-      const targetElement = document.getElementById(`${target}Aulas`);
-      if (targetElement) {
-        targetElement.classList.add("active");
-      }
-    });
-  });
-}
-
-function showLoading() {
-  const loader = document.getElementById("loader");
-  if (loader) loader.classList.add("visible");
-}
-
-function hideLoading() {
-  const loader = document.getElementById("loader");
-  if (loader) loader.classList.remove("visible");
-}

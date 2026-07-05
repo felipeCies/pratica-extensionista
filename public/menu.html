@@ -2,117 +2,122 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Menu Principal - Protótipo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />    
+    <title>Menu Principal - Laboratório Maker</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/png" href="img/icone.png" />
-    <link rel="manifest" href="manifest.json" />
-    <meta name="theme-color" content="#007bff" />
   </head>
-  <body id="topo">
+  <body id="topo" class="bg-menu">
     <nav class="menu">
       <div class="menu-top">
-        <div class="profile-icon"></div>
-        <div class="profile-info">
-          <h2 class="profile-name">Lorem Ipsum</h2>
-          <p class="profile-status">Lorem Ipsum</p>
-        </div>
+        <a href="perfil.html" class="perfil-link">
+          <img src="img/user_img.png" alt="" class="profile-icon-menu" />
+          <div class="profile-info">
+            <h2 class="profile-name" id="menuName">Carregando...</h2>
+            <p class="profile-status">Ver meu perfil</p>
+          </div>
+        </a>
       </div>
+      
       <div class="search-bar">
-        <input type="text" id="buscaCursoIdeia" placeholder="Buscar..." />
+        <input type="text" id="buscaCursoIdeia" placeholder="Buscar cursos ou ideias..." />
       </div>
     </nav>
 
-    <div class="content">
+    <main class="content">
       <h3 class="carousel-title">Cursos em Destaque</h3>
       <div class="carrossel" id="cursosCarrossel"></div>
 
-      <h3 class="carousel-title" class="aulas.html">Ideias</h3>
+      <h3 class="carousel-title">Ideias</h3>
       <div class="carrossel" id="ideiasCarrossel"></div>
-    </div>
+    </main>
 
-    <footer class="custom-footer">
-      <hr class="footer-divider" />
-      <div class="footer-container">
-        <p class="footer-text">
-          &copy; Desenvolvido pelos alunos Felipe, Gabriel, Mauricio e Guilherme
-          &middot;
-        </p>
-        <p>
-          <a href="contato.html" class="footer-link"
-            >Entre em contato com os desenvolvedores</a
-          >
-        </p>
-        <p><a href="#topo" class="footer-link">Voltar ao topo</a></p>
-      </div>
+  <footer class="custom-footer">
+        <hr class="footer-divider" />
+        <div class="footer-container">
+          <p class="footer-text">
+            &copy; Desenvolvido pelos alunos Felipe, Gabriel, Mauricio e Guilherme &middot;
+          </p>
+          <p>
+            <a href="https://github.com/mini-niko/pratica-extensionista" target="_blank" class="footer-link" style="color: #333; margin-bottom: 10px; display: inline-block;">
+              <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" style="width: 16px; vertical-align: middle; margin-right: 5px;">
+             Ver projeto no GitHub
+            </a>
+          </p>
+          <p><a href="#topo" class="footer-link">Voltar ao topo</a></p>
+        </div>
     </footer>
 
     <script src="script.js"></script>
     <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          document.getElementById("menuName").innerText = user.nome || "Aluno Maker";
+        }
+      });
+
       async function getAllCourses() {
         const cursosCarrossel = document.getElementById("cursosCarrossel");
+        try {
+          const response = await fetch("/api/courses");
+          if (!response.ok) throw new Error();
+          const cursos = await response.json();
 
-        const response = await fetch("/api/courses");
+          for (let curso of cursos) {
+            const cursoDiv = document.createElement("a");
+            cursoDiv.href = `aulas.html?cursoId=${curso.id}`;
+            cursoDiv.classList.add("curso");
+            cursoDiv.dataset.nome = curso.nome;
 
-        if (!response.ok) throw new Error();
+            const img = document.createElement("img");
+            img.src = "img/play_icon.png";
+            img.alt = "";
 
-        const cursos = await response.json();
+            const spanNome = document.createElement("span");
+            spanNome.textContent = curso.nome;
 
-        for (let curso of cursos) {
-          const cursoDiv = document.createElement("a");
-          cursoDiv.href = `/aulas.html?cursoId=${curso.id}`;
-          cursoDiv.classList.add("curso");
-
-          cursoDiv.dataset.nome = curso.nome;
-
-          const img = document.createElement("img");
-          img.src = "img/play_icon.png";
-          img.alt = curso.nome;
-
-          const spanNome = document.createElement("span");
-          spanNome.textContent = curso.nome;
-
-          cursoDiv.appendChild(img);
-          cursoDiv.appendChild(spanNome);
-
-          cursosCarrossel.appendChild(cursoDiv);
+            cursoDiv.appendChild(img);
+            cursoDiv.appendChild(spanNome);
+            cursosCarrossel.appendChild(cursoDiv);
+          }
+        } catch (error) {
+          console.error("Erro ao carregar cursos", error);
         }
       }
 
       async function getAllIdeas() {
         const ideiasCarrossel = document.getElementById("ideiasCarrossel");
+        try {
+          const response = await fetch("/api/ideas");
+          if (!response.ok) throw new Error();
+          const ideias = await response.json();
 
-        const response = await fetch("/api/ideas");
+          for (let ideia of ideias) {
+            const ideiaDiv = document.createElement("a");
+            ideiaDiv.href = `ideia.html?ideiaId=${ideia.id}`;
+            ideiaDiv.classList.add("ideia");
+            ideiaDiv.dataset.nome = ideia.titulo;
 
-        if (!response.ok) throw new Error();
+            const img = document.createElement("img");
+            img.src = "img/play_icon.png";
+            img.alt = "";
 
-        const ideias = await response.json();
+            const spanNome = document.createElement("span");
+            spanNome.textContent = ideia.titulo;
 
-        for (let ideia of ideias) {
-          const ideiaDiv = document.createElement("a");
-          ideiaDiv.href = `/ideia.html?ideiaId=${ideia.id}`;
-          ideiaDiv.classList.add("ideia");
-
-          ideiaDiv.dataset.nome = ideia.titulo;
-
-          const img = document.createElement("img");
-          img.src = "img/play_icon.png";
-          img.alt = ideia.titulo;
-
-          const spanNome = document.createElement("span");
-          spanNome.textContent = ideia.titulo;
-
-          ideiaDiv.appendChild(img);
-          ideiaDiv.appendChild(spanNome);
-
-          ideiasCarrossel.appendChild(ideiaDiv);
+            ideiaDiv.appendChild(img);
+            ideiaDiv.appendChild(spanNome);
+            ideiasCarrossel.appendChild(ideiaDiv);
+          }
+        } catch (error) {
+          console.error("Erro ao carregar ideias", error);
         }
       }
 
       getAllCourses();
       getAllIdeas();
     </script>
-    <div id="loader" class="loading-overlay">
-      <div class="spinner"></div>
-    </div>
   </body>
 </html>

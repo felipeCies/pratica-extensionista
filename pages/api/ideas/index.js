@@ -1,45 +1,30 @@
 import { createRouter } from "next-connect";
-import { setCORS } from "models/controller";
 import ideas from "models/ideas";
+import { setCORS } from "models/controller";
 
 export default createRouter()
   .use(setCORS)
   .get(GET)
-  .post(POST)
+  .post(POST) 
   .handler({
-    onError: (err, _, res) => {
-      res
-        .status(400)
-        .json({ error: err.message || "Erro ao processar requisição" });
+    onError: (error, __, res) => {
+      console.error("Erro interno:", error);
+      res.status(500).json({ error: "Erro ao processar requisição" });
     },
   });
 
+
 async function GET(req, res) {
-  const { id } = req.query;
 
-  if (id) {
-    const idea = await ideas.getById(id);
-    return res.status(200).json(idea);
-  }
-
-  const ideasList = await ideas.getAll();
-  res.status(200).json(ideasList);
+  const allIdeas = await ideas.getAll();
+  res.status(200).json(allIdeas || []);
 }
 
 async function POST(req, res) {
-  const { usuario_id, titulo, descricao, conteudo } = req.body;
+  const { titulo, conteudo } = req.body;
 
-  if (!usuario_id || !titulo) {
-    return res
-      .status(400)
-      .json({ error: "usuario_id e título são obrigatórios" });
-  }
+  const newIdea = await ideas.create(titulo, conteudo);
+  
 
-  const idea = await ideas.create(
-    usuario_id,
-    titulo,
-    descricao || null,
-    conteudo || null
-  );
-  res.status(201).json(idea);
+  res.status(201).json({ message: "Ideia criada com sucesso", idea: newIdea });
 }

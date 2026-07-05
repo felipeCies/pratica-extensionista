@@ -17,9 +17,14 @@ export default createRouter()
 
 async function GET(req, res) {
   const { id } = req.query;
+  console.log(id)
+
+  
 
   const course = await courses.getById(id);
+  console.log(course)
   res.status(200).json(course);
+  
 }
 
 async function PUT(req, res) {

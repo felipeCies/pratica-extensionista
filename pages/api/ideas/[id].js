@@ -1,17 +1,16 @@
 import { createRouter } from "next-connect";
-import { setCORS } from "models/controller";
 import ideas from "models/ideas";
+import { setCORS } from "models/controller";
 
 export default createRouter()
   .use(setCORS)
   .get(GET)
   .put(PUT)
-  .delete(DELETE)
+  .delete(DELETE) 
   .handler({
-    onError: (err, _, res) => {
-      res
-        .status(400)
-        .json({ error: err.message || "Erro ao processar requisição" });
+    onError: (error, __, res) => {
+      console.error("Erro interno no [id].js:", error);
+      res.status(500).json({ error: "Erro ao processar a requisição" });
     },
   });
 
@@ -19,20 +18,26 @@ async function GET(req, res) {
   const { id } = req.query;
 
   const idea = await ideas.getById(id);
+  
+  if (!idea) {
+    return res.status(404).json({ error: "Ideia não encontrada" });
+  }
+
   res.status(200).json(idea);
 }
 
+
 async function PUT(req, res) {
   const { id } = req.query;
-  const { titulo, descricao, conteudo } = req.body;
+  const { titulo, conteudo } = req.body; 
 
-  const idea = await ideas.update(id, titulo, descricao, conteudo);
-  res.status(200).json(idea);
+  const updatedIdea = await ideas.update(id, titulo, conteudo);
+  res.status(200).json(updatedIdea);
 }
 
 async function DELETE(req, res) {
   const { id } = req.query;
 
-  const idea = await ideas.remove(id);
-  res.status(200).json({ message: "Ideia deletada com sucesso", idea });
+  const deletedIdea = await ideas.remove(id);
+  res.status(200).json({ message: "Ideia deletada com sucesso", idea: deletedIdea });
 }

@@ -1,51 +1,34 @@
 import { createRouter } from "next-connect";
-import { setCORS } from "models/controller";
 import lessons from "models/lessons";
+import { setCORS } from "models/controller";
 
 export default createRouter()
   .use(setCORS)
   .get(GET)
-  .post(POST)
+  .post(POST) 
   .handler({
-    onError: (err, _, res) => {
-      res
-        .status(400)
-        .json({ error: err.message || "Erro ao processar requisição" });
+    onError: (error, __, res) => {
+      console.error("Erro interno:", error);
+      res.status(500).json({ error: "Erro ao processar requisição" });
     },
   });
 
 async function GET(req, res) {
-  const { course_id, lesson_id } = req.query;
-
-  if (lesson_id) {
-    const lesson = await lessons.getById(lesson_id);
-    return res.status(200).json(lesson);
-  }
+  const { course_id } = req.query;
 
   if (course_id) {
-    const lessonsList = await lessons.getAll(course_id);
-    return res.status(200).json(lessonsList);
+    const courseLessons = await lessons.getByCourseId(course_id);
+    return res.status(200).json(courseLessons || []);
   }
 
-  res
-    .status(400)
-    .json({ error: "Parâmetro 'course_id' ou 'lesson_id' é obrigatório" });
+  const allLessons = await lessons.getAll();
+  return res.status(200).json(allLessons || []);
 }
 
 async function POST(req, res) {
-  const { course_id, titulo, descricao, conteudo } = req.body;
+  const { curso_id, titulo, video_url, texto_explicativo } = req.body;
 
-  if (!course_id || !titulo) {
-    return res
-      .status(400)
-      .json({ error: "course_id e título são obrigatórios" });
-  }
-
-  const lesson = await lessons.create(
-    course_id,
-    titulo,
-    descricao || null,
-    conteudo || null
-  );
-  res.status(201).json(lesson);
+  const newLesson = await lessons.create(curso_id, titulo, video_url, texto_explicativo);
+  
+  res.status(201).json({ message: "Aula criada com sucesso", lesson: newLesson });
 }

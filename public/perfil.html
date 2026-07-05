@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meu Perfil - Laboratório Maker</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="img/icone.png" />
+</head>
+<body id="topo" class="bg-perfil">
+  <header class="header-aulas">
+    <div class="header-aulas-top">
+      <a href="javascript:history.back()" class="back-button">
+        <img src="img/voltar_icone.png" alt="Voltar">
+      </a>
+      <h1 id="aulaTitulo">Laboratório Maker</h1>
+      <div style="width: 24px;"></div> 
+    </div>
+  </header>
+
+  <main class="main-content-aulas">
+    <div class="profile-card">
+      <img src="img/user_img.png" class="profile-icon" alt="Foto do aluno" />
+      
+      <div class="profile-details">
+        <div class="info-item">
+          <span class="info-label">Nome do aluno(a):</span>
+          <span class="info-value" id="profileName">Carregando...</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">Idade:</span>
+          <span class="info-value" id="profileAge">Buscando...</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">CPF:</span>
+          <span class="info-value" id="profileCpf">Buscando...</span>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-label">Email:</span>
+          <span class="info-value" id="profileEmail">Buscando...</span>
+        </div>
+
+        <div class="info-item">
+          <span class="info-label">Instituição de ensino:</span>
+          <span class="info-value" id="profileSchool">Buscando...</span>
+        </div>
+      </div>
+      
+      <div class="stats-container">
+        <div class="stat-box">
+          <span id="totalFavoritos">0</span>
+          Aulas Favoritas
+        </div>
+      </div>
+      <div class="profile-actions">
+        <a href="menu.html" class="btn-voltar">Voltar ao Menu</a>
+        <button class="btn-logout" onclick="fazerLogout()">Sair</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="custom-footer">
+    <hr class="footer-divider" />
+    <div class="footer-container">
+      <p class="footer-text">
+        &copy; Desenvolvido pelos alunos Felipe, Gabriel, Mauricio e Guilherme &middot;
+      </p>
+    </div>
+  </footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      try {
+        // 1. DADOS DO USUÁRIO
+        const userStr = localStorage.getItem("user");
+        
+        if (userStr) {
+          const user = JSON.parse(userStr);
+          const nome = user.nome || "Aluno Maker";
+          
+          document.getElementById("profileName").innerText = nome;
+          document.getElementById("profileEmail").innerText = user.email || "Sem e-mail cadastrado";
+          document.getElementById("profileAge").innerText = user.idade || "Não informada";
+          document.getElementById("profileCpf").innerText = user.cpf || "123.456.789-00"; 
+          document.getElementById("profileSchool").innerText = user.instituicao || "Polo Universitário Local";
+        }
+
+        // 2. CONTADOR DE FAVORITOS 
+        const favoritosData = localStorage.getItem("favoritos");
+        let total = 0;
+        
+        if (favoritosData) {
+            const favoritosArray = JSON.parse(favoritosData);
+            total = favoritosArray.length;
+        }
+        
+        
+        const contadorElemento = document.getElementById("totalFavoritos");
+        if (contadorElemento) {
+            contadorElemento.innerText = total;
+        }
+
+      } catch (erro) {
+        console.error("Erro ao processar dados do perfil:", erro);
+      }
+    });
+
+    // 3. LOGOUT
+    function fazerLogout() {
+      if (confirm("Tem certeza que deseja sair da sua conta?")) {
+        localStorage.removeItem("user");
+        window.location.href = "index.html"; 
+      }
+    }
+  </script>
+</body>
+</html>

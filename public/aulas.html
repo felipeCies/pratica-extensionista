@@ -6,13 +6,11 @@
     <title>Aulas</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="icon" type="image/png" href="img/icone.png" />
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#007bff">
   </head>
   <body id="topo">
     <header class="header-aulas">
       <div class="header-aulas-top">
-        <a href="javascript:history.back()" class="back-button">
+        <a href="menu.html" class="back-button">
           <img src="img/voltar_icone.png" alt="Voltar" />
         </a>
 
@@ -24,19 +22,12 @@
       </div>
 
       <div id="buscaWrapper" style="display: none">
-        <input
-          type="text"
-          id="buscaAula"
-          placeholder="Buscar aula..."
-          class="input-busca"
-        />
+        <input type="text" id="buscaAula" placeholder="Buscar aula..." class="input-busca" />
       </div>
 
       <div class="tabs">
-        <a href="aulas.html" class="tab-button" data-tab="todos">Todos</a>
-        <a href="favoritos.html" class="tab-button" data-tab="favoritos"
-          >Favoritos</a
-        >
+          <a id="tabTodos" href="#" class="tab-button active" style="pointer-events: none;">Todos</a>
+          <a id="tabFavoritos" href="#" class="tab-button">Favoritos</a>
       </div>
     </header>
 
@@ -48,8 +39,7 @@
       <hr class="footer-divider" />
       <div class="footer-container">
         <p class="footer-text">
-          &copy; Desenvolvido pelos alunos Felipe, Gabriel, Mauricio e Guilherme
-          &middot;
+          &copy; Desenvolvido pelos alunos Felipe, Gabriel, Mauricio e Guilherme &middot;
         </p>
         <p><a href="#topo" class="footer-link">Voltar ao topo</a></p>
       </div>
@@ -60,70 +50,98 @@
       const url = new URL(window.location.href);
       const courseId = url.searchParams.get("cursoId");
 
+      
+      if (courseId) {
+          document.getElementById("tabFavoritos").href = `favoritos.html?cursoId=${courseId}`;
+      }
+
       async function fetchLessonsByCourseId(courseId) {
-        // Mostra o loading antes de buscar
-        showLoading(); 
+        
+        const lessonsListContainer = document.getElementById("todosAulas");
+
+        if (!courseId) {
+          lessonsListContainer.innerHTML = "<h3 style='text-align: center; margin-top: 50px;'>Nenhum curso selecionado! Volte para a página inicial.</h3>";
+          return; 
+        }
 
         try {
-            const response = await fetch(
-              `/api/lessons?course_id=${courseId}`
-            );
+          const response = await fetch(`/api/lessons?course_id=${courseId}`);
+          const lessons = await response.json();
 
-            const lessons = await response.json();
-            const lessonsListContainer = document.getElementById("todosAulas");
+          if (!Array.isArray(lessons) || lessons.length === 0) {
+            lessonsListContainer.innerHTML = "<h3 style='text-align: center; margin-top: 50px;'>Nenhuma aula encontrada para este curso.</h3>";
+            return;
+          }
 
-            // --- CORREÇÃO AQUI: Criar a variável contador ---
-            let contador = 1; 
+          lessons.forEach((lesson, index) => {
+            const numeroAulaReal = index + 1; 
 
-            for (let lesson of lessons) {
-              const lessonContainer = document.createElement("a");
-              
-              // O link continua usando o ID real para funcionar a navegação
-              lessonContainer.href = `aula.html?id=${lesson.id}`;
-              lessonContainer.className = "aula-item";
+            const lessonContainer = document.createElement("a");
+            lessonContainer.href = `aula.html?id=${lesson.id}`;
+            lessonContainer.className = "aula-item";
 
-              const thumb = document.createElement("div");
-              thumb.className = "aula-thumb";
+            const thumb = document.createElement("div");
+            thumb.className = "aula-thumb";
 
-              const infoContainer = document.createElement("div");
-              infoContainer.className = "aula-info";
+            const infoContainer = document.createElement("div");
+            infoContainer.className = "aula-info";
 
-              const lessonTitle = document.createElement("h3");
-              lessonTitle.className = "aula-title";
-              
-              // Usa o contador
-              lessonTitle.innerHTML = `Aula ${contador}`; 
-              
-              // Incrementa para a próxima
-              contador++; 
+            const lessonTitle = document.createElement("h3");
+            lessonTitle.className = "aula-title";
+            lessonTitle.innerHTML = `Aula ${numeroAulaReal}`; 
 
-              const lessonDescription = document.createElement("p");
-              lessonDescription.className = "aula-description";
-              lessonDescription.innerHTML = lesson.titulo;
+            const lessonDescription = document.createElement("p");
+            lessonDescription.className = "aula-description";
+            lessonDescription.innerHTML = lesson.titulo;
 
-              infoContainer.appendChild(lessonTitle);
-              infoContainer.appendChild(lessonDescription);
+            const favBtn = document.createElement("button");
+            favBtn.innerHTML = "🤍 Favoritar";
+            favBtn.style.cssText = "margin-top: 10px; cursor: pointer; padding: 5px 10px; background: #eee; border: none; border-radius: 5px; font-weight: bold;";
 
-              lessonContainer.appendChild(thumb);
-              lessonContainer.appendChild(infoContainer);
-
-              lessonsListContainer.appendChild(lessonContainer);
+            let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+            if (favoritos.some(fav => fav.id === lesson.id)) {
+              favBtn.innerHTML = "⭐ Favoritado";
+              favBtn.style.background = "#ffd700";
             }
+
+            favBtn.onclick = (e) => {
+              e.preventDefault(); 
+              let favs = JSON.parse(localStorage.getItem("favoritos")) || [];
+              const idx = favs.findIndex(f => f.id === lesson.id);
+
+              if (idx > -1) {
+                favs.splice(idx, 1);
+                favBtn.innerHTML = "🤍 Favoritar";
+                favBtn.style.background = "#eee";
+              } else {
+                favs.push({ 
+                  id: lesson.id, 
+                  titulo: lesson.titulo, 
+                  courseId: courseId, 
+                  numeroAula: numeroAulaReal 
+                });
+                favBtn.innerHTML = "⭐ Favoritado";
+                favBtn.style.background = "#ffd700";
+              }
+              localStorage.setItem("favoritos", JSON.stringify(favs));
+            };
+
+            infoContainer.appendChild(lessonTitle);
+            infoContainer.appendChild(lessonDescription);
+            infoContainer.appendChild(favBtn); 
+
+            lessonContainer.appendChild(thumb);
+            lessonContainer.appendChild(infoContainer);
+
+            lessonsListContainer.appendChild(lessonContainer);
+          });
         } catch (error) {
-            console.error("Erro ao carregar aulas:", error);
-        } finally {
-            // Esconde o loading independente de sucesso ou erro
-            hideLoading();
+          console.error("Erro ao buscar as aulas:", error);
+          lessonsListContainer.innerHTML = "<h3 style='text-align: center; margin-top: 50px; color: red;'>Erro ao carregar as aulas.</h3>";
         }
       }
 
       fetchLessonsByCourseId(courseId);
     </script>
-
-      fetchLessonsByCourseId(courseId);
-    </script>
-      <div id="loader" class="loading-overlay">
-        <div class="spinner"></div>
-      </div>
   </body>
 </html>
